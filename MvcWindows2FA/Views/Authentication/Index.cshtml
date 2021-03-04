@@ -1,0 +1,46 @@
+﻿@model TwoFactorVerifyViewModel
+@{
+    ViewData["Title"] = "Verify with Authenticator App";
+}
+
+<h4>@ViewData["Title"]</h4>
+<div>
+    <p>To use an authenticator app verify your identity:</p>
+    <ul class="list">
+        <li>
+            <p>
+                Enter the code from your authenticator app in the confirmation box below.
+            </p>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="control-label">Verification Code</label>
+                        <input id="validationCode" class="form-control" autocomplete="off" />
+                    </div>
+                    <button id="submit" class="btn btn-primary">Verify</button>
+                </div>
+            </div>
+        </li>
+    </ul>
+</div>
+
+@section scripts {
+    <script type="text/javascript">
+        var model = {
+            validationCode: '@Model.ValidationCode',
+            token: '@Model.Token'
+        };
+
+        var postUrl = '@Html.Raw(Url.Action("2FA", "Authentication"))';
+        $(document).on('click', '#submit', function () {
+            var code = $('#validationCode').val();
+            model.validationCode = code;
+            $.post(postUrl, model, function () {
+                window.location.href = "/";
+            })
+            .fail(function (response) {
+                alert('Error: ' + response.responseText);
+            });
+        });
+    </script>
+}
